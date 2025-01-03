@@ -3,11 +3,13 @@ from kanban_app.models import Task, Subtask
 from .serializers import TaskSerializer, SubtaskSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from .permissions import IsStaffOrReadOnly
 
 # Task ViewSet
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    permission_classes = [IsStaffOrReadOnly]
 
     @action(detail=True, methods=['patch'])
     def update_status(self, request, pk=None):
