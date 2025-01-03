@@ -12,6 +12,13 @@ class Task(models.Model):
         ('userStory', 'User Story')
     ]
 
+    STATUS_CHOICES = [
+        ('todo', 'To Do'),
+        ('inProgress', 'In Progress'),
+        ('awaitFeedback', 'Awaiting Feedback'),
+        ('done', 'Done')
+    ]
+
     title = models.CharField(max_length=255)
     description = models.TextField(max_length=255, default='', blank=True)
     assignedContacts = models.JSONField(default=list)
@@ -20,15 +27,18 @@ class Task(models.Model):
         max_length=7, choices=PRIORITY_CHOICES)
     category = models.CharField(
         max_length=10, choices=CATEGORY_CHOICES, blank=True, default='')
-    subtasks = models.JSONField(default=list)
+    status = models.CharField(
+        max_length=13, choices=STATUS_CHOICES, default='todo')
 
     def __str__(self):
         return self.title
 
 
+# Subtask Model
 class Subtask(models.Model):
-    task = models.ForeignKey('Task', related_name='subtask', on_delete=models.CASCADE)
+    task = models.ForeignKey('Task', related_name='subtasks', on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
+    status = models.CharField(max_length=20, default='in-progress')
 
     def __str__(self):
         return self.title
