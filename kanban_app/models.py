@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+
 
 class Task(models.Model):
     PRIORITY_CHOICES = [
@@ -29,6 +31,11 @@ class Task(models.Model):
         max_length=10, choices=CATEGORY_CHOICES, blank=True, default='')
     status = models.CharField(
         max_length=13, choices=STATUS_CHOICES, default='todo')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='tasks'
+    ) 
 
     def __str__(self):
         return self.title

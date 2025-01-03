@@ -2,16 +2,12 @@ from rest_framework import serializers
 from user_auth_app.models import UserProfile
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-import re
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['user', 'bio', 'location']
 
-
-from rest_framework import serializers
-import re
 
 class RegistrationSerializer(serializers.ModelSerializer):
 
@@ -25,17 +21,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
-
-    # def validate_username(self, value):
-    #     # Überprüfen, ob der Benutzername aus genau zwei Wörtern besteht
-    #     if len(value.split()) != 2:
-    #         raise serializers.ValidationError("Der Benutzername muss aus genau zwei Wörtern bestehen, Vorname und Nachname.")
-        
-    #     # Optional: Überprüfen, ob der Benutzername nur Buchstaben und Leerzeichen enthält (keine Sonderzeichen)
-    #     if not re.match(r'^[A-Za-zÄÖÜäöüß\s]+$', value):
-    #         raise serializers.ValidationError("Der Benutzername darf nur Buchstaben und Leerzeichen enthalten.")
-        
-    #     return value
 
     def save(self):
         pw = self.validated_data['password']
