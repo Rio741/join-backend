@@ -10,8 +10,8 @@ class Task(models.Model):
     ]
 
     CATEGORY_CHOICES = [
-        ('technical', 'Technical'),
-        ('userStory', 'User Story')
+        ('Technical', 'Technical'),
+        ('User_Story', 'User Story')
     ]
 
     STATUS_CHOICES = [
