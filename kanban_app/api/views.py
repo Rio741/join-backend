@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from kanban_app.models import Task, Subtask
-from .serializers import TaskSerializer, SubtaskSerializer
+from kanban_app.models import Task, Subtask, Contact
+from .serializers import TaskSerializer, SubtaskSerializer, ContactSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .permissions import IsStaffOrReadOnly
@@ -13,13 +13,12 @@ class TaskViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)  # user statt owner
+        serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        # Nur die Tasks des authentifizierten Benutzers anzeigen
-        return Task.objects.filter(user=self.request.user)  # user statt owner
-
-
+        if self.request.user.is_superuser:
+            return Task.objects.all()
+        return Task.objects.filter(user=self.request.user)
 
     @action(detail=True, methods=['patch'])
     def update_status(self, request, pk=None):
@@ -32,26 +31,36 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response({'id': task.id, 'status': task.status}, status=200)
 
 
-
 class SubtaskViewSet(viewsets.ModelViewSet):
     serializer_class = SubtaskSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Filtere Subtasks, die zu den Tasks des authentifizierten Benutzers gehören
+        if self.request.user.is_superuser:
+            return Subtask.objects.all()
         return Subtask.objects.filter(task__user=self.request.user)
 
-
     def perform_create(self, serializer):
-        # Verknüpfe den Subtask mit einem Task
         serializer.save()
 
     @action(detail=True, methods=['patch'])
     def update_status(self, request, pk=None):
         subtask = self.get_object()
         new_status = request.data.get('status')
-        if new_status not in ['in-progress', 'done']:
+        if new_status not in ['inProgress', 'done']:
             return Response({'error': 'Invalid status'}, status=400)
         subtask.status = new_status
         subtask.save()
         return Response({'id': subtask.id, 'status': subtask.status}, status=200)
+
+
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)

@@ -41,7 +41,6 @@ class Task(models.Model):
         return self.title
 
 
-# Subtask Model
 class Subtask(models.Model):
     task = models.ForeignKey('Task', related_name='subtasks', on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
@@ -49,3 +48,18 @@ class Subtask(models.Model):
 
     def __str__(self):
         return self.title
+    
+
+class Contact(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='contacts'
+    )
+    name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    color = models.CharField(max_length=20, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.email})"
