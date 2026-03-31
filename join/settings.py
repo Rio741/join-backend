@@ -1,16 +1,21 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-SECRET_KEY = 'django-insecure-gy3m)&_!*y%7+t!+qk6+-537#4t$q0a=mn%x$cs03z)$npru3b'
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY is not set in the environment variables.")
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["join.rio-stenger.de", "127.0.0.1", "34.93.66.101", "localhost"]
+ALLOWED_HOSTS = ["join.rio-stenger.de", "127.0.0.1", "localhost"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
